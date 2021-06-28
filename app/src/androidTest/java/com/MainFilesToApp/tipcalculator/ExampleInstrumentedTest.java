@@ -1,4 +1,4 @@
-package com.example.tipcalculator;
+package com.MainFilesToApp.tipcalculator;
 
 import android.content.Context;
 

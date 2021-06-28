@@ -1,4 +1,4 @@
-package com.example.tipcalculator;
+package com.MainFilesToApp.tipcalculator;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,8 +7,6 @@ import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -74,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                     total.setText("");
 
                     String msg= "Please enter the cost";
-                    
+
                     warning=warning.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT);
                     warning.show();
                 }
