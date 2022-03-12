@@ -1,10 +1,19 @@
 package com.MainFilesToApp.tipcalculator;
+/**
+ * Author: Luziano Reyna
+ * Application: Tip Calculator
+ *
+ */
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +35,12 @@ public class MainActivity extends AppCompatActivity {
     public TextView Cost;
     public Slider CustomTipSlider;
 
+    public Button spendingButton;
+
+    /**Testing Number Picker
+    public NumberPicker PercentNumPicker;
+    */
+
     public HashMap<String,Float> sharedValues;
     Toast warning;
 
@@ -43,6 +58,14 @@ public class MainActivity extends AppCompatActivity {
         Cost = (TextView)findViewById(R.id.cost);
         CustomTipSlider=(Slider)findViewById(R.id.customTipSlider);
 
+        //Testing switching views
+        spendingButton=(Button)findViewById(R.id.spendingButton);
+
+        /** Testing number picker
+        PercentNumPicker =(NumberPicker)findViewById(R.id.PercentNumPicker);
+        PercentNumPicker.setMinValue(0);
+        PercentNumPicker.setMaxValue(100);
+        */
 
         //sharedValues= new HashMap<String,Float>();
         warning = new Toast(getApplicationContext());
@@ -50,9 +73,28 @@ public class MainActivity extends AppCompatActivity {
         selectTen();
         selectFifthteen();
         customTipSlider();
+        switchToSpending();
 
+        /** Testing number picker
+        numberPickerSelection();
+        */
 
     }
+
+    public void switchToSpending(){
+
+        spendingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("Changing view");
+                Intent intent = new Intent(MainActivity.this,MainActivity2.class);
+                startActivity(intent);
+
+            }
+        });
+
+    }
+
 
 
     public void selectFive(){
@@ -127,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
                  total.setText(performCalculations(0.15f,0));
                 }else{
-                    produceWaring();
+                    produceWarning();
                     //warning.cancel();
                     //setAllButtons(false,false,false);
 
@@ -145,9 +187,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /*
-     ******Error upon empty Cost field********
-     */
+
     public void customTipSlider(){
         //Custom Label to change add USD code to value
         CustomTipSlider.setLabelFormatter(value ->  {
@@ -155,9 +195,10 @@ public class MainActivity extends AppCompatActivity {
             NumberFormat format = NumberFormat.getCurrencyInstance();
             format.setMaximumFractionDigits(0);
             //Establish currency code to formatter
-            format.setCurrency(Currency.getInstance("USD"));
+            //format.setCurrency(Currency.getInstance("USD"));
             //Convert format object with instance value, merge them
-            String CovertedLabel =format.format(value);
+            int WholeNum = (int) value;
+            String CovertedLabel = "%"+WholeNum; //format.format(value);
             //Return the converted label to be displayed
             return CovertedLabel;
         });
@@ -182,12 +223,10 @@ public class MainActivity extends AppCompatActivity {
         CustomTipSlider.addOnChangeListener(new Slider.OnChangeListener() {
             @Override
             public void onValueChange(Slider slider, float value, boolean fromUser) {
-               // if(Cost.getText()!="") {
-                    System.out.println("Changing the value Continous use: " + value);
-                    total.setText(performCalculations(0.0f, value));
-              //  }else{
-                //   produceWaring();
-               // }
+                    float testNum = value / 100;
+                    System.out.println("Changing the value Continous use: " + testNum);
+                    total.setText(performCalculations(testNum, value));
+
             }
         });
 
@@ -196,9 +235,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * performCalculations Description
+     * @param percent
+     * @param value
+     * @return
+     */
     public String performCalculations(Float percent, float value){
         String ConvertedTipAmount="";
-
+        try{
+        if(Cost.getText() ==""){
+            System.out.println("Umm its empty");
+            ConvertedTipAmount = "Empty";
+            return ConvertedTipAmount;
+        }
         if (percent == 0.0f ){
             String coststr=Cost.getText().toString();
             float cost = Float.parseFloat(coststr);
@@ -217,6 +267,9 @@ public class MainActivity extends AppCompatActivity {
             ConvertedTipAmount="Tip: "+String.valueOf(roundedValue.format(tip))+" Total:"+ roundedValue.format(totalCost);
         }
 
+        }catch(NumberFormatException ex){
+            System.out.println(ex);
+        }
         return ConvertedTipAmount;
     }
 
@@ -227,16 +280,32 @@ public class MainActivity extends AppCompatActivity {
         fifthteen.setChecked(fifthteenSetting);
     }
 
-
-    public void produceWaring(){
+    /**
+     * produceWarning
+     */
+    public void produceWarning(){
         warning.cancel();
         setAllButtons(false,false,false);
-
-
         total.setText("");
-
         String msg= "Please enter the cost";
         warning=warning.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT);
         warning.show();
     }
+
+
+    //Retriving Num Picker values
+    /** Choose not use number picker as on a phone the slider would be more efficent and less annoying, the NumberPicker would be better on a smaller device
+     * that cant afford the same space as a phone would ie watch
+    public void numberPickerSelection(){
+        PercentNumPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+
+                int pickedValue = picker.getValue();
+                System.out.println("Selected Value: "+pickedValue);
+            }
+        });
+    }
+    */
+
 }
